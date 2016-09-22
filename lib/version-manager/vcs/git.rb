@@ -25,7 +25,7 @@ module VersionManager
       attr_reader :git
 
       def master_branch_name
-        'master'
+        VersionManager.options[:master_branch]
       end
 
       def remote_master_branch_name
