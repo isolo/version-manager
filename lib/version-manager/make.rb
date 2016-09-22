@@ -19,20 +19,20 @@ module VersionManager
 
     def release!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless appropriate_branch?(__method__)
+      raise ForbiddenBranchError unless aprropriate_branch_for?('release')
       vcs.create_branch!(branch_name)
     end
 
     def hotfix!
       raise BranchIsNotUpToDateError unless vcs.state_actual?
-      raise ForbiddenBranchError unless appropriate_branch?(__method__)
+      raise ForbiddenBranchError unless aprropriate_branch_for?('hotfix')
     end
 
     private
 
     attr_reader :version, :vcs
 
-    def appropriate_branch?(action)
+    def aprropriate_branch_for?(action)
       authorized_mask = VersionManager.options[:authorized_branches][action]
       !authorized_branch || !vcs.current_branch.match(authorized_mask).nil?
     end
