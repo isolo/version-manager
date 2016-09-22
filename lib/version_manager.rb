@@ -1,6 +1,8 @@
 require 'docopt'
 require 'git'
 
+ROOT_DIR = File.expand_path(File.join(__FILE__, '..', '..'))
+
 module VersionManager
   DEFAULTS = {
     master_branch: 'master',
@@ -8,6 +10,10 @@ module VersionManager
     authorized_branches: {
       release: '^\bmaster\b$',
       hotfix: '^\brelease-[a-zA-Z0-9.]*$\b$'
+    },
+    storage: {
+      filename: 'VERSION',
+      filepath: ROOT_DIR
     }
   }
 
@@ -19,8 +25,6 @@ module VersionManager
     @options = opts
   end
 end
-
-ROOT_DIR = File.expand_path(File.join(__FILE__, '..', '..'))
 
 require_relative 'version-manager/vcs'
 require_relative 'version-manager/vcs/git'
