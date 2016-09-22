@@ -5,6 +5,11 @@ module VersionManager
         @git = ::Git.open(ROOT_DIR)
       end
 
+      def create_branch!(branch_name)
+        raise VCS::BranchAlreadyExistsError.new(branch_name) if branch_exists?(branch_exists)
+        git.branch(branch_name).checkout
+      end
+
       def current_branch
         git.branch.name
       end
@@ -23,6 +28,11 @@ module VersionManager
       private
 
       attr_reader :git
+
+      def branch_exists?(branch_name)
+        branches = ::Git.ls_remote['branches'].keys + ::Git.ls_remote['remotes'].keys
+        branches.any? { |b| b.split('/').last == branch_name }
+      end
 
       def master_branch_name
         VersionManager.options[:master_branch]
