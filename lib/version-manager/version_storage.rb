@@ -6,9 +6,10 @@ module VersionManager
     end
 
     def store(version)
-      File.open(full_path) do |file|
+      File.open(full_path, 'w') do |file|
         file << version
       end
+      full_path
     end
 
     private
