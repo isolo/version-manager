@@ -12,15 +12,28 @@ module VersionManager
       end
     end
 
-    def initialize(version, vsc)
+    def initialize(version, vsc, version_storage)
       @version = version
       @vcs = vcs
+      @version_storage = version_storage
     end
 
-    def release!
+    def major!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
       raise ForbiddenBranchError unless aprropriate_branch_for?('release')
+      version.bump_major
       vcs.create_branch!(branch_name)
+      vcs.commit(version_storage.store(version), "Bumped version to #{version}")
+      vcs.push
+    end
+
+    def minor!
+      raise BranchIsNotUpToDateError unless vcs.master_state_actual?
+      raise ForbiddenBranchError unless aprropriate_branch_for?('release')
+      version.bump_minor
+      vcs.create_branch!(branch_name)
+      vcs.commit(version_storage.store(version), "Bumped version to #{version}")
+      vcs.push
     end
 
     def hotfix!
@@ -30,7 +43,7 @@ module VersionManager
 
     private
 
-    attr_reader :version, :vcs
+    attr_reader :version, :vcs, :version_storage
 
     def aprropriate_branch_for?(action)
       authorized_mask = VersionManager.options[:authorized_branches][action]
