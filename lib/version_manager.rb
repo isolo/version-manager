@@ -5,10 +5,17 @@ ROOT_DIR = File.expand_path(File.join(__FILE__, '..', '..'))
 
 module VersionManager
   DEFAULTS = {
-    master_branch: 'master',
-    vcs: 'git',
+    vcs: {
+      name: 'git',
+      default_commit_message: -> (version) { "Bumped to version #{version}" },
+      options: {
+        remote: 'origin',
+        master_branch: 'master',
+      }
+    },
     authorized_branches: {
-      release: '^\bmaster\b$',
+      major: '^\bmaster\b$',
+      minor: '^\bmaster\b$',
       hotfix: '^\brelease-[a-zA-Z0-9.]*$\b$'
     },
     storage: {
