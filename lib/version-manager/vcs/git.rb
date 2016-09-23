@@ -1,13 +1,28 @@
 module VersionManager
   module VCS
     class Git
-      def initialize
+      def initialize(options)
         @git = ::Git.open(ROOT_DIR)
+        @options = options
       end
 
       def create_branch!(branch_name)
         raise VCS::BranchAlreadyExistsError.new(branch_name) if branch_exists?(branch_exists)
         git.branch(branch_name).checkout
+      end
+
+      def commit(filepath, message)
+        git.lib.send(:command, 'add', filepath)
+        git.lib.send(:command, 'commit', "-m #{message}", "-o #{filepath}")
+      end
+
+      def add_tag(tag_name, message)
+        git.add_tag(tag_name, message: message, annotate: tag_name)
+      end
+
+      def push
+        git.pull(remote, current_branch)
+        git.push(remote, current_branch)
       end
 
       def current_branch
@@ -27,7 +42,7 @@ module VersionManager
 
       private
 
-      attr_reader :git
+      attr_reader :git, :options
 
       def branch_exists?(branch_name)
         branches = ::Git.ls_remote['branches'].keys + ::Git.ls_remote['remotes'].keys
@@ -35,11 +50,15 @@ module VersionManager
       end
 
       def master_branch_name
-        VersionManager.options[:master_branch]
+        options[:master_branch]
+      end
+
+      def remote
+        options[:remote]
       end
 
       def remote_master_branch_name
-        find_remote_branch(master_branch_name).first
+        "#{options[:remote]}/#{master_branch_name}"
       end
 
       def find_remote_branch(branch_name)
