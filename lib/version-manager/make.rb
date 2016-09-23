@@ -20,25 +20,21 @@ module VersionManager
 
     def major!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless aprropriate_branch_for?('release')
-      version.bump_major
-      vcs.create_branch!(branch_name)
-      vcs.commit(version_storage.store(version), "Bumped version to #{version}")
-      vcs.push
+      raise ForbiddenBranchError unless aprropriate_branch_for?('major')
+      default_strategy { |version| version.bump_major }
     end
 
     def minor!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless aprropriate_branch_for?('release')
-      version.bump_minor
-      vcs.create_branch!(branch_name)
-      vcs.commit(version_storage.store(version), "Bumped version to #{version}")
-      vcs.push
+      raise ForbiddenBranchError unless aprropriate_branch_for?('minor')
+      default_strategy { |version| version.bump_minor }
     end
 
-    def hotfix!
+    def patch!
       raise BranchIsNotUpToDateError unless vcs.state_actual?
       raise ForbiddenBranchError unless aprropriate_branch_for?('hotfix')
+      version.bump_patch
+      vcs.commit(version_storage.store(version), default_commit_message)
     end
 
     private
@@ -52,6 +48,19 @@ module VersionManager
 
     def branch_name
       "remote-#{version.to_s}"
+    end
+
+    def default_strategy
+      yield version
+      vcs.create_branch!(branch_name)
+      vcs.commit(version_storage.store(version), default_commit_message)
+      vcs.add_tag(version, default_commit_message)
+      vcs.push
+    end
+
+    def default_commit_message
+      message = options[:vcs][:default_commit_message]
+      message.respond_to?(:call) ? message.call(version) : message.to_s
     end
   end
 end
