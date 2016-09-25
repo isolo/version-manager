@@ -44,6 +44,10 @@ module VersionManager
         head[:sha] == remote_head[:sha]
       end
 
+      def remote_branch_names
+        ::Git.ls_remote['remotes'].keys
+      end
+
       private
 
       attr_reader :git, :options

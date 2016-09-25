@@ -1,8 +1,9 @@
 module VersionManager
   class VersionStorage
-    def initialize
-      @filename = VersionManager.options[:storage][:filename]
-      @filepath = VersionManager.options[:storage][:filepath]
+    def initialize(vcs, storage_options)
+      @filename = storage_options[:filename]
+      @filepath = storage_options[:filepath]
+      @vcs = vcs
     end
 
     def store(version)
@@ -12,9 +13,16 @@ module VersionManager
       full_path
     end
 
+    def latest_version
+      versions = vcs.remote_branch_names.map do |name|
+        ReleaseVersion.new(name) if ReleaseVersion.valid?(name)
+      end
+      versions.compact.sort.last
+    end
+
     private
 
-    attr_reader :filename, :filepath
+    attr_reader :filename, :filepath, :vcs
 
     def full_path
       File.expand_path(File.join(filepath, filename))
