@@ -59,7 +59,7 @@ module VersionManager
     end
 
     def default_commit_message
-      message = options[:vcs][:default_commit_message]
+      message = VersionManager.options[:vcs][:default_commit_message]
       message.respond_to?(:call) ? message.call(version) : message.to_s
     end
   end
