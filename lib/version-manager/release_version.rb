@@ -10,7 +10,7 @@ module VersionManager
 
     def initialize(version_input)
       version_components = version_input.dup
-      version_components = version.scan(/[0-9]+|\w+/) unless version_input.respond_to?(:to_ary)
+      version_components = version_input.scan(/(\d+)\.{1}(\d+)\.?(\d*)(?:--(\w+))?/).flatten unless version_input.respond_to?(:to_ary)
       @major, @minor, @patch, @special = version_components
     end
 
