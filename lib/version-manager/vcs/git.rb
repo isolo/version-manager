@@ -25,6 +25,10 @@ module VersionManager
         git.push(remote, current_branch)
       end
 
+      def push_tag(tag_name)
+        git.push(remote, tag_name)
+      end
+
       def current_branch
         git.branch.name
       end
