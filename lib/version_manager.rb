@@ -16,7 +16,7 @@ module VersionManager
     authorized_branches: {
       major: '^\bmaster\b$',
       minor: '^\bmaster\b$',
-      hotfix: '^\brelease-[a-zA-Z0-9.]*$\b$'
+      patch: '^\brelease-[a-zA-Z0-9.]*$\b$'
     },
     storage: {
       filename: 'VERSION',
@@ -38,3 +38,7 @@ require_relative 'version-manager/vcs/git'
 
 require_relative 'version-manager/version'
 require_relative 'version-manager/cli'
+
+require_relative 'version-manager/release_version'
+require_relative 'version-manager/version_storage'
+require_relative 'version-manager/make.rb'

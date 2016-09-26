@@ -32,7 +32,7 @@ module VersionManager
 
     def patch!
       raise BranchIsNotUpToDateError unless vcs.state_actual?
-      raise ForbiddenBranchError unless aprropriate_branch_for?('hotfix')
+      raise ForbiddenBranchError unless aprropriate_branch_for?('patch')
       version.bump_patch
       vcs.commit(version_storage.store(version), default_commit_message)
     end
@@ -47,14 +47,15 @@ module VersionManager
     end
 
     def branch_name
-      "remote-#{version.to_s}"
+      "release-#{version.to_s}"
     end
 
     def default_strategy
       yield version
       vcs.create_branch!(branch_name)
       vcs.commit(version_storage.store(version), default_commit_message)
-      vcs.add_tag(version, default_commit_message)
+      vcs.add_tag(version.to_s, default_commit_message)
+      vcs.push_tag(version.to_s)
       vcs.push
     end
 
