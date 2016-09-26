@@ -11,6 +11,10 @@ module VersionManager
         git.branch(branch_name).checkout
       end
 
+      def show_file(branch, filepath)
+        git.object("#{branch}:#{filepath}")
+      end
+
       def commit(filepath, message)
         git.lib.send(:command, 'add', filepath)
         git.lib.send(:command, 'commit', "-m #{message}", "-o #{filepath}")

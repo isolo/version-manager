@@ -22,7 +22,7 @@ module VersionManager
 
     def self.build
       case VersionManager.options[:vcs][:name]
-      when 'git' then VersionManager::VCS::Git.new
+      when 'git' then VersionManager::VCS::Git.new(VersionManager.options[:vcs])
       else raise UnsupportedVCSError
       end
     end
