@@ -45,8 +45,8 @@ module VersionManager
       end
 
       def state_actual?
-        head = ::Git.ls_remote['head']
-        remote_head = find_remote_branch('HEAD').last
+        head = ::Git.ls_remote['branches'][git.current_branch]
+        remote_head = find_remote_branch(git.current_branch).last
         return unless remote_head
         head[:sha] == remote_head[:sha]
       end
