@@ -1,6 +1,6 @@
 module VersionManager
   module VCS
-    class BranchAlreadyExistsError
+    class BranchAlreadyExistsError < StandardError
       def initialize(branch_name)
         @branch_name = branch_name
       end
@@ -10,7 +10,7 @@ module VersionManager
       end
     end
 
-    class UnsupportedVCSError
+    class UnsupportedVCSError < StandardError
       def initialize(vcs)
         @vcs = vcs
       end

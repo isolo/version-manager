@@ -2,12 +2,13 @@ module VersionManager
   module VCS
     class Git
       def initialize(options)
-        @git = ::Git.open(ROOT_DIR)
+        require 'logger'
+        @git = ::Git.open(ROOT_DIR, log: Logger.new(STDOUT))
         @options = options
       end
 
       def create_branch!(branch_name)
-        raise VCS::BranchAlreadyExistsError.new(branch_name) if branch_exists?(branch_name)
+        raise VersionManager::VCS::BranchAlreadyExistsError.new(branch_name) if branch_exists?(branch_name)
         git.branch(branch_name).checkout
       end
 
@@ -34,7 +35,7 @@ module VersionManager
       end
 
       def current_branch
-        git.branch.name
+        git.current_branch
       end
 
       def master_state_actual?
