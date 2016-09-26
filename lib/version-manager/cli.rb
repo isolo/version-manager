@@ -44,11 +44,11 @@ module VersionManager
       storage_options = VersionManager.options[:storage]
       storage = VersionStorage.new(VCS.build, storage_options)
       version = storage.latest_version
-      set_initial_version unless version
+      version = retrieve_initial_version unless version
       Make.new(version, VCS.build, storage).public_send("#{release_type}!")
     end
 
-    def set_initial_version
+    def retrieve_initial_version
       puts 'There are no any versions. Please, input an initial one:'
       ReleaseVersion.new(STDIN.gets)
     rescue ArgumentError => e

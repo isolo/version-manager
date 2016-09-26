@@ -12,7 +12,7 @@ module VersionManager
       end
     end
 
-    def initialize(version, vsc, version_storage)
+    def initialize(version, vcs, version_storage)
       @version = version
       @vcs = vcs
       @version_storage = version_storage
@@ -20,19 +20,19 @@ module VersionManager
 
     def major!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless aprropriate_branch_for?('major')
+      raise ForbiddenBranchError unless appropriate_branch_for?('major')
       default_strategy { |version| version.bump_major }
     end
 
     def minor!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless aprropriate_branch_for?('minor')
+      raise ForbiddenBranchError unless appropriate_branch_for?('minor')
       default_strategy { |version| version.bump_minor }
     end
 
     def patch!
       raise BranchIsNotUpToDateError unless vcs.state_actual?
-      raise ForbiddenBranchError unless aprropriate_branch_for?('patch')
+      raise ForbiddenBranchError unless appropriate_branch_for?('patch')
       version.bump_patch
       vcs.commit(version_storage.store(version), default_commit_message)
     end
@@ -41,9 +41,9 @@ module VersionManager
 
     attr_reader :version, :vcs, :version_storage
 
-    def aprropriate_branch_for?(action)
+    def appropriate_branch_for?(action)
       authorized_mask = VersionManager.options[:authorized_branches][action]
-      !authorized_branch || !vcs.current_branch.match(authorized_mask).nil?
+      !authorized_mask || !vcs.current_branch.match(authorized_mask).nil?
     end
 
     def branch_name

@@ -22,6 +22,7 @@ module VersionManager
       res = parts.map(&:to_i).join('.')
       [res, special].compact.join('--')
     end
+    alias_method :to_s, :to_str
 
     def short_version
       [major, minor].map(&:to_i).join('.')
