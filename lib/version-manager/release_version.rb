@@ -14,7 +14,8 @@ module VersionManager
         version_components = version_input.scan(/(\d+)\.{1}(\d+)\.?(\d*)(?:--(\w+))?/).flatten
         raise ArgumentError, 'Incorrect version format' if version_components.all?(&:nil?) || version_components.empty?
       end
-      @major, @minor, @patch, @special = version_components.map(&:to_i)
+      @major, @minor, @patch = version_components[0..2].map(&:to_i)
+      @special = version_components[3]
       recalculate_parts
     end
 
