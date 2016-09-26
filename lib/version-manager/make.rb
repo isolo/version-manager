@@ -42,7 +42,7 @@ module VersionManager
     attr_reader :version, :vcs, :version_storage
 
     def appropriate_branch_for?(action)
-      authorized_mask = VersionManager.options[:authorized_branches][action]
+      authorized_mask = VersionManager.options[:authorized_branches][action.to_sym]
       !authorized_mask || !vcs.current_branch.match(authorized_mask).nil?
     end
 
