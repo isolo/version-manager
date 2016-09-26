@@ -14,6 +14,8 @@ module VersionManager
 
       def show_file(branch, filepath)
         git.object("#{branch}:#{filepath}")
+      rescue StandardError
+        nil
       end
 
       def commit(filepath, message)
@@ -26,7 +28,7 @@ module VersionManager
       end
 
       def push
-        git.pull(remote, current_branch)
+        git.pull(remote, current_branch) if find_remote_branch(current_branch)
         git.push(remote, current_branch)
       end
 

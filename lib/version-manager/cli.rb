@@ -21,7 +21,7 @@ module VersionManager
 
       begin
         parse_options(Docopt::docopt(doc))
-      rescue Docopt::Exit => e
+      rescue StandardError => e
         puts e.message
       end
     end
@@ -35,7 +35,7 @@ module VersionManager
         puts VersionManager::VERSION
       end
       %w(major minor patch).each do |release|
-        next unless options.keys.include?(release)
+        next unless options[release]
         break make_release(release.to_sym)
       end
     end
