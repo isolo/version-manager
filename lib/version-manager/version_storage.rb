@@ -28,7 +28,7 @@ module VersionManager
     attr_reader :filename, :filepath, :vcs
 
     def relative_path
-      Pathname.new(full_path).relative_path_from(Pathname.new(ROOT_PATH)).to_s
+      Pathname.new(full_path).relative_path_from(Pathname.new(ROOT_DIR)).to_s
     end
 
     def full_path
