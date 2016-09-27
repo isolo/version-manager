@@ -18,7 +18,7 @@ module VersionManager
         ReleaseVersion.new(name) if ReleaseVersion.valid?(name)
       end
       version = versions.compact.sort.last
-      file_content = vcs.show_file(branch_name(version), relative_path) if version
+      file_content = vcs.show_file(version.branch, relative_path) if version
       version = ReleaseVersion.new(file_content) if file_content && ReleaseVersion.valid?(file_content)
       version
     end
@@ -33,10 +33,6 @@ module VersionManager
 
     def full_path
       File.expand_path(File.join(filepath, filename))
-    end
-
-    def branch_name(version)
-      "release-#{version.short_version}"
     end
   end
 end

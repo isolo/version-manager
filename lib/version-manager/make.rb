@@ -47,13 +47,9 @@ module VersionManager
       !authorized_mask || !vcs.current_branch.match(authorized_mask).nil?
     end
 
-    def branch_name
-      "release-#{version.short_version}"
-    end
-
     def default_strategy
       yield version
-      vcs.create_branch!(branch_name)
+      vcs.create_branch!(version.branch)
       vcs.commit(version_storage.store(version), default_commit_message)
       vcs.add_tag(version.to_s, default_commit_message)
       vcs.push_tag(version.to_s)

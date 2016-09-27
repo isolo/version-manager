@@ -25,6 +25,7 @@ module VersionManager
       filename: 'VERSION',
       filepath: ROOT_DIR
     },
+    version_name: -> (version) { "release-#{version.short_version}" }
   }
 
   def self.options
