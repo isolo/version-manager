@@ -1,5 +1,6 @@
 require 'docopt'
 require 'git'
+require 'logger'
 
 ROOT_DIR = File.expand_path(File.join(__FILE__, '..', '..'))
 
@@ -11,6 +12,7 @@ module VersionManager
       options: {
         remote: 'origin',
         master_branch: 'master',
+        log: Logger.new(STDOUT)
       }
     },
     authorized_branches: {
@@ -21,7 +23,7 @@ module VersionManager
     storage: {
       filename: 'VERSION',
       filepath: ROOT_DIR
-    }
+    },
   }
 
   def self.options

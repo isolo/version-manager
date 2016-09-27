@@ -2,9 +2,8 @@ module VersionManager
   module VCS
     class Git
       def initialize(options)
-        require 'logger'
-        @git = ::Git.open(ROOT_DIR, log: Logger.new(STDOUT))
         @options = options
+        @git = ::Git.open(ROOT_DIR, options)
       end
 
       def create_branch!(branch_name)
