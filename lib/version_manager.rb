@@ -2,7 +2,7 @@ require 'docopt'
 require 'git'
 require 'logger'
 
-ROOT_DIR = File.expand_path(File.join(__FILE__, '..', '..'))
+ROOT_DIR = Dir.pwd
 
 module VersionManager
   DEFAULTS = {
