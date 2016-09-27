@@ -8,6 +8,10 @@ module VersionManager
 
       def create_branch!(branch_name)
         raise VersionManager::VCS::BranchAlreadyExistsError.new(branch_name) if branch_exists?(branch_name)
+        checkout(branch_name)
+      end
+
+      def checkout(branch_name)
         git.branch(branch_name).checkout
       end
 
