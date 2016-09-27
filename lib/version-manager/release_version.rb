@@ -29,6 +29,10 @@ module VersionManager
       [major, minor].map(&:to_i).join('.')
     end
 
+    def branch
+      VersionManager.options[:version_name].call(self)
+    end
+
     def <=>(other_version)
       parts.zip(other_version.parts).
         map { |this, other| this <=> other }.
