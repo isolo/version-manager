@@ -68,7 +68,7 @@ module VersionManager
     private
 
     def recalculate_parts
-      @parts = [@major, @minor, @patch].map(&:to_i)
+      @parts = [major, minor, patch].map(&:to_i)
     end
   end
 end
