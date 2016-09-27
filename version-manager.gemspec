@@ -10,12 +10,10 @@ Gem::Specification.new do |spec|
   spec.email         = ['ilya.i.solo@gmail.com']
 
   spec.summary       = 'Versioning lib (with Git support)'
-  spec.homepage      = 'version-manager'
+  spec.homepage      = 'https://github.com/isolo/version-manager'
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files -z`.split('\x0').reject { |f| f.match(%r{^(test|spec|features)/}) }
-  spec.bindir        = 'bin'
-  spec.executables   << 'manver'
+  spec.files         = `git ls-files`.split("\n")
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 

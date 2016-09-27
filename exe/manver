@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/version_manager'
+require_relative '../lib/version-manager'
 VersionManager::CLI.new(exec_name: File.basename(__FILE__)).start
-# VersionManager::CLI.test
