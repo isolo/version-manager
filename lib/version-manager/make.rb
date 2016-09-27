@@ -35,6 +35,8 @@ module VersionManager
       raise ForbiddenBranchError unless appropriate_branch_for?('patch')
       version.bump_patch
       vcs.commit(version_storage.store(version), default_commit_message)
+      vcs.add_tag(version.to_s, default_commit_message)
+      vcs.push_tag(version.to_s)
       vcs.push
     end
 
