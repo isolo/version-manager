@@ -11,6 +11,7 @@ module VersionManager
         #{exec_name} make major
         #{exec_name} make minor
         #{exec_name} make patch
+        #{exec_name} latest
         #{exec_name} -h | --help
         #{exec_name} -v | --version
 
@@ -31,21 +32,31 @@ module VersionManager
     attr_reader :exec_name
 
     def parse_options(options)
-      if options['--version']
-        puts VersionManager::VERSION
-      end
+      puts VersionManager::VERSION if options['--version']
+      checkout_to_latest_version if options['latest']
       %w(major minor patch).each do |release|
         next unless options[release]
         break make_release(release.to_sym)
       end
     end
 
+    def checkout_to_latest_version
+      storage = build_storage
+      version = storage.latest_version
+      return puts 'There are no any versions.' unless version
+      VCS.build.checkout(version.branch)
+    end
+
     def make_release(release_type)
-      storage_options = VersionManager.options[:storage]
-      storage = VersionStorage.new(VCS.build, storage_options)
+      storage = build_storage
       version = storage.latest_version
       version = retrieve_initial_version unless version
       Make.new(version, VCS.build, storage).public_send("#{release_type}!")
+    end
+
+    def build_storage
+      storage_options = VersionManager.options[:storage]
+      VersionStorage.new(VCS.build, storage_options)
     end
 
     def retrieve_initial_version
