@@ -47,7 +47,7 @@ module VersionManager
     end
 
     def branch_name
-      "release-#{version.to_s}"
+      "release-#{version.short_version}"
     end
 
     def default_strategy
