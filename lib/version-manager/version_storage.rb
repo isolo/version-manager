@@ -15,7 +15,8 @@ module VersionManager
 
     def latest_version
       versions = vcs.remote_branch_names.map do |name|
-        ReleaseVersion.new(name) if name.start_with?('release-') && ReleaseVersion.valid?(name)
+        name = name.split('/').last
+        ReleaseVersion.new(name) if name.include?('release-') && ReleaseVersion.valid?(name)
       end
       version = versions.compact.sort.last
       file_content = vcs.show_file(version.branch, relative_path) if version
