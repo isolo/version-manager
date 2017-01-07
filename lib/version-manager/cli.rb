@@ -50,8 +50,13 @@ module VersionManager
     def make_release(release_type)
       storage = build_storage
       version = storage.latest_version
+
+      return unless Ask.confirm("You are going to upgrade version to #{version}. Do it? [Y/n]", default: false)
+
       version = retrieve_initial_version unless version
       Make.new(version, VCS.build, storage).public_send("#{release_type}!")
+    rescue VersionManager::VersionStorage::WrongLatestVersionError => e
+      puts "There is inappropriate version #{e.version} in your local/remote repository. Please remove it"
     end
 
     def build_storage

@@ -39,6 +39,10 @@ module VersionManager
         find { |res| res != 0 } || 0
     end
 
+    def -(other_version)
+      self.class.new(parts.zip(other_version.parts).map { |x, y| x - y })
+    end
+
     def bump_major
       @major += 1
       @minor = 0

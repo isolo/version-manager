@@ -2,6 +2,7 @@ require 'docopt'
 require 'git'
 require 'pathname'
 require 'logger'
+require 'inquirer'
 
 ROOT_DIR = Dir.pwd
 

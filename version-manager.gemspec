@@ -21,5 +21,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.12'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_dependency 'docopt', '~> 0.5'
+  spec.add_dependency 'inquirer', '~> 0.2'
   spec.add_dependency 'git', '~> 1.3'
 end

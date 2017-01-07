@@ -12,7 +12,7 @@ module VersionManager
       end
 
       def checkout(branch_name)
-        git.branch(branch_name).checkout
+        git.lib.send(:command, 'checkout', branch_name)
       end
 
       def show_file(branch, filepath)
