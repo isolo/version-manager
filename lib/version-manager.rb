@@ -13,8 +13,7 @@ module VersionManager
       default_commit_message: -> (version) { "Bumped to version #{version}" },
       options: {
         remote: 'origin',
-        master_branch: 'master',
-        log: Logger.new(STDOUT)
+        master_branch: 'master'
       }
     },
     authorized_branches: {
