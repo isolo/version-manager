@@ -25,7 +25,7 @@ module VersionManager
         name = name.split('/').last
         ReleaseVersion.new(name) if name.include?('release-') && ReleaseVersion.valid?(name)
       end
-      version = select_appropriate_versions(versions).last
+      version = select_appropriate_version(versions)
       file_content = vcs.show_file(version.branch, relative_path) if version
       version = ReleaseVersion.new(file_content) if file_content && ReleaseVersion.valid?(file_content)
       version
@@ -43,7 +43,7 @@ module VersionManager
       File.expand_path(File.join(filepath, filename))
     end
 
-    def select_appropriate_versions(versions)
+    def select_appropriate_version(versions)
       sorted_versions = versions.compact.sort
       prev_last_version, last_version = sorted_versions.last(2)
       return prev_last_version unless last_version
