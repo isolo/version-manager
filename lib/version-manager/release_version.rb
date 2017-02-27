@@ -8,10 +8,10 @@ module VersionManager
       end
     end
 
-    def initialize(version_input)
-      version_components = version_input.dup
-      unless version_input.respond_to?(:to_ary)
-        version_components = version_input.scan(/(\d+)\.{1}(\d+)\.?(\d*)(?:--(\w+))?/).flatten
+    def initialize(*version_input)
+      version_components = Array(version_input.dup.flatten)
+      if version_components.size == 1
+        version_components = version_components.first.scan(/(\d+)\.{1}(\d+)\.?(\d*)(?:--(\w+))?/).flatten
         raise ArgumentError, 'Incorrect version format' if version_components.all?(&:nil?) || version_components.empty?
       end
       @major, @minor, @patch = version_components[0..2].map(&:to_i)
@@ -44,21 +44,15 @@ module VersionManager
     end
 
     def bump_major
-      @major += 1
-      @minor = 0
-      @patch = 0
-      recalculate_parts
+      self.class.new(@major + 1, 0, 0)
     end
 
     def bump_minor
-      @minor += 1
-      @patch = 0
-      recalculate_parts
+      self.class.new(@major, @minor + 1, 0)
     end
 
     def bump_patch
-      @patch += 1
-      recalculate_parts
+      self.class.new(@major, @minor, @patch + 1)
     end
 
     def self.valid?(version)
@@ -73,6 +67,7 @@ module VersionManager
 
     def recalculate_parts
       @parts = [major, minor, patch].map(&:to_i)
+      self
     end
   end
 end

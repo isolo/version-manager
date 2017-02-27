@@ -21,19 +21,32 @@ module VersionManager
     end
 
     def latest_version
-      versions = vcs.remote_branch_names.map do |name|
-        name = name.split('/').last
-        ReleaseVersion.new(name) if name.include?('release-') && ReleaseVersion.valid?(name)
-      end
-      version = select_appropriate_versions(versions).last
-      file_content = vcs.show_file(version.branch, relative_path) if version
-      version = ReleaseVersion.new(file_content) if file_content && ReleaseVersion.valid?(file_content)
+      versions = vcs.remote_branch_names.map(&method(:version_from_branch_name))
+      version = select_appropriate_version(versions) # It's a partial release version (only major and minor parts)
+      version_from_file(version)
+    end
+
+    def current_version
+      version = version_from_branch_name(vcs.current_branch)
+      raise ArgumentError, 'Can not detect a current version' unless version
       version
     end
 
     private
 
     attr_reader :filename, :filepath, :vcs
+
+    def version_from_file(version)
+      return unless version
+      file_content = vcs.show_file(version.branch, relative_path) if version
+      ReleaseVersion.new(file_content) if file_content && ReleaseVersion.valid?(file_content)
+    end
+
+    def version_from_branch_name(branch_name)
+      return unless branch_name
+      branch_name = branch_name.split('/').last
+      ReleaseVersion.new(branch_name) if branch_name.include?('release-') && ReleaseVersion.valid?(branch_name)
+    end
 
     def relative_path
       Pathname.new(full_path).relative_path_from(Pathname.new(ROOT_DIR)).to_s
@@ -43,7 +56,7 @@ module VersionManager
       File.expand_path(File.join(filepath, filename))
     end
 
-    def select_appropriate_versions(versions)
+    def select_appropriate_version(versions)
       sorted_versions = versions.compact.sort
       prev_last_version, last_version = sorted_versions.last(2)
       return prev_last_version unless last_version

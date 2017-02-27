@@ -44,16 +44,17 @@ module VersionManager
       storage = build_storage
       version = storage.latest_version
       return puts 'There are no any versions.' unless version
-      VCS.build.checkout(version.branch)
+      VCS.build.switch_branch(version.branch)
     end
 
     def make_release(release_type)
       storage = build_storage
-      version = storage.latest_version
+      version = release_type == :patch ? storage.current_version : storage.latest_version
 
-      return unless Ask.confirm("You are going to upgrade version to #{version}. Do it? [Y/n]", default: false)
-
+      new_version = version.public_send("bump_#{release_type}")
+      return if version && !Ask.confirm("You are going to upgrade version to #{new_version}. Do it?", default: false)
       version = retrieve_initial_version unless version
+
       Make.new(version, VCS.build, storage).public_send("#{release_type}!")
     rescue VersionManager::VersionStorage::WrongLatestVersionError => e
       puts "There is inappropriate version #{e.version} in your local/remote repository. Please remove it"

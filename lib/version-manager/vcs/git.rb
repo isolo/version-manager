@@ -12,6 +12,10 @@ module VersionManager
       end
 
       def checkout(branch_name)
+        git.branch(branch_name).checkout
+      end
+
+      def switch_branch(branch_name) # checkout moves commits to new branch
         git.lib.send(:command, 'checkout', branch_name)
       end
 

@@ -21,19 +21,19 @@ module VersionManager
     def major!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
       raise ForbiddenBranchError unless appropriate_branch_for?('major')
-      default_strategy { |version| version.bump_major }
+      default_strategy { version.bump_major }
     end
 
     def minor!
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
       raise ForbiddenBranchError unless appropriate_branch_for?('minor')
-      default_strategy { |version| version.bump_minor }
+      default_strategy { version.bump_minor }
     end
 
     def patch!
       raise BranchIsNotUpToDateError unless vcs.state_actual?
       raise ForbiddenBranchError unless appropriate_branch_for?('patch')
-      version.bump_patch
+      @version = version.bump_patch
       vcs.commit(version_storage.store(version), default_commit_message)
       vcs.add_tag(version.to_s, default_commit_message)
       vcs.push_tag(version.to_s)
@@ -50,7 +50,7 @@ module VersionManager
     end
 
     def default_strategy
-      yield version
+      @version = yield
       vcs.create_branch!(version.branch)
       vcs.commit(version_storage.store(version), default_commit_message)
       vcs.add_tag(version.to_s, default_commit_message)
