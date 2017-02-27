@@ -29,7 +29,7 @@ module VersionManager
     def current_version
       version = version_from_branch_name(vcs.current_branch)
       raise ArgumentError, 'Can not detect a current version' unless version
-      version
+      version_from_file(version)
     end
 
     private
