@@ -12,45 +12,42 @@ module VersionManager
       end
     end
 
-    def initialize(version, vcs, version_storage)
-      @version = version
+    def initialize(vcs, version_storage)
       @vcs = vcs
       @version_storage = version_storage
     end
 
-    def major!
+    def validate!(release_type)
       raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless appropriate_branch_for?('major')
-      default_strategy { version.bump_major }
+      raise ForbiddenBranchError unless appropriate_branch_for?(release_type)
     end
 
-    def minor!
-      raise BranchIsNotUpToDateError unless vcs.master_state_actual?
-      raise ForbiddenBranchError unless appropriate_branch_for?('minor')
-      default_strategy { version.bump_minor }
+    def major!(version)
+      default_strategy(version.bump_major)
     end
 
-    def patch!
-      raise BranchIsNotUpToDateError unless vcs.state_actual?
-      raise ForbiddenBranchError unless appropriate_branch_for?('patch')
-      @version = version.bump_patch
-      vcs.commit(version_storage.store(version), default_commit_message)
-      vcs.add_tag(version.to_s, default_commit_message)
+    def minor!(version)
+      default_strategy(version.bump_minor)
+    end
+
+    def patch!(version)
+      version = version.bump_patch
+      vcs.commit(version_storage.store(version), default_commit_message(version))
+      vcs.add_tag(version.to_s, default_commit_message(version))
       vcs.push_tag(version.to_s)
       vcs.push
     end
 
     private
 
-    attr_reader :version, :vcs, :version_storage
+    attr_reader :vcs, :version_storage
 
     def appropriate_branch_for?(action)
       authorized_mask = VersionManager.options[:authorized_branches][action.to_sym]
       !authorized_mask || !vcs.current_branch.match(authorized_mask).nil?
     end
 
-    def default_strategy
-      @version = yield
+    def default_strategy(version)
       vcs.create_branch!(version.branch)
       vcs.commit(version_storage.store(version), default_commit_message)
       vcs.add_tag(version.to_s, default_commit_message)
@@ -58,7 +55,7 @@ module VersionManager
       vcs.push
     end
 
-    def default_commit_message
+    def default_commit_message(version)
       message = VersionManager.options[:vcs][:default_commit_message]
       message.respond_to?(:call) ? message.call(version) : message.to_s
     end
