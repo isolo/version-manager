@@ -49,13 +49,19 @@ module VersionManager
 
     def make_release(release_type)
       storage = build_storage
+
+      make = Make.new(VCS.build, storage)
+      make.validate!(release_type)
+
       version = release_type == :patch ? storage.current_version : storage.latest_version
+      if version
+        new_version = version.public_send("bump_#{release_type}")
+        return unless Ask.confirm("You are going to upgrade version to #{new_version}. Do it?", default: false)
+      else
+        version = retrieve_initial_version
+      end
 
-      new_version = version.public_send("bump_#{release_type}")
-      return if version && !Ask.confirm("You are going to upgrade version to #{new_version}. Do it?", default: false)
-      version = retrieve_initial_version unless version
-
-      Make.new(version, VCS.build, storage).public_send("#{release_type}!")
+      make.public_send("#{release_type}!", version)
     rescue VersionManager::VersionStorage::WrongLatestVersionError => e
       puts "There is inappropriate version #{e.version} in your local/remote repository. Please remove it"
     end
