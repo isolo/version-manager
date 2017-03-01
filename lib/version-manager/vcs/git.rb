@@ -20,7 +20,7 @@ module VersionManager
       end
 
       def show_file(branch, filepath)
-        git.object("#{branch}:#{filepath}").contents
+        git.object("#{remote}/#{branch}:#{filepath}").contents
       rescue StandardError
         nil
       end
