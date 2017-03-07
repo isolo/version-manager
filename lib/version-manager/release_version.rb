@@ -19,28 +19,23 @@ module VersionManager
       recalculate_parts
     end
 
-    def to_str
+    def to_s
       res = parts.map(&:to_i).join('.')
       [res, special].compact.join('--')
     end
-    alias_method :to_s, :to_str
 
     def short_version
       [major, minor].map(&:to_i).join('.')
     end
 
-    def branch
-      VersionManager.options[:version_name].call(self)
+    def <=>(other)
+      parts.zip(other.parts)
+           .map { |this, other_part| this <=> other_part }
+           .find { |res| res != 0 } || 0
     end
 
-    def <=>(other_version)
-      parts.zip(other_version.parts).
-        map { |this, other| this <=> other }.
-        find { |res| res != 0 } || 0
-    end
-
-    def -(other_version)
-      self.class.new(parts.zip(other_version.parts).map { |x, y| x - y })
+    def -(other)
+      self.class.new(parts.zip(other.parts).map { |x, y| x - y })
     end
 
     def bump_major
