@@ -3,7 +3,7 @@ module VersionManager
     class Git
       def initialize(options)
         @options = options
-        @git = ::Git.open(ROOT_DIR, options)
+        @git = ::Git.open(options[:dir], options)
       end
 
       def create_branch!(branch_name)
@@ -20,7 +20,7 @@ module VersionManager
       end
 
       def show_file(branch, filepath)
-        git.object("#{remote}/#{branch}:#{filepath}").contents
+        git.object("#{options[:remote]}/#{branch}:#{filepath}").contents
       rescue StandardError
         nil
       end
@@ -52,14 +52,14 @@ module VersionManager
       end
 
       def state_actual?
-        head = ::Git.ls_remote['branches'][git.current_branch]
+        head = git_remote['branches'][git.current_branch]
         remote_head = find_remote_branch(git.current_branch).last
         return unless remote_head
         head[:sha] == remote_head[:sha]
       end
 
       def remote_branch_names
-        ::Git.ls_remote['remotes'].keys
+        git_remote['remotes'].keys
       end
 
       private
@@ -67,7 +67,7 @@ module VersionManager
       attr_reader :git, :options
 
       def branch_exists?(branch_name)
-        branches = ::Git.ls_remote['branches'].keys + ::Git.ls_remote['remotes'].keys
+        branches = git_remote['branches'].keys + git_remote['remotes'].keys
         branches.any? { |b| b.split('/').last == branch_name }
       end
 
@@ -75,16 +75,16 @@ module VersionManager
         options[:master_branch]
       end
 
-      def remote
-        options[:remote]
-      end
-
       def remote_master_branch_name
         "#{options[:remote]}/#{master_branch_name}"
       end
 
       def find_remote_branch(branch_name)
-        ::Git.ls_remote['remotes'].find { |remote, _| branch_name == remote.split('/').last }
+        remote_branch_names.find { |remote, _| branch_name == remote.split('/').last }
+      end
+
+      def git_remote
+        ::Git.ls_remote(options[:dir])
       end
     end
   end
