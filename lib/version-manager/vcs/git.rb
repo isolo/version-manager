@@ -6,21 +6,22 @@ module VersionManager
         @git = ::Git.open(options[:dir], options)
       end
 
-      def create_branch!(branch_name)
-        raise VersionManager::VCS::BranchAlreadyExistsError.new(branch_name) if branch_exists?(branch_name)
-        checkout(branch_name)
+      def create_branch!(branch)
+        branch = branch_name(branch)
+        raise VersionManager::VCS::BranchAlreadyExistsError.new(branch) if branch_exists?(branch)
+        checkout(branch)
       end
 
-      def checkout(branch_name)
-        git.branch(branch_name).checkout
+      def checkout(branch)
+        git.branch(branch_name(branch)).checkout
       end
 
-      def switch_branch(branch_name) # checkout moves commits to new branch
-        git.lib.send(:command, 'checkout', branch_name)
+      def switch_branch(branch) # checkout moves commits to new branch
+        git.lib.send(:command, 'checkout', branch_name(branch))
       end
 
       def show_file(branch, filepath)
-        git.object("#{options[:remote]}/#{branch}:#{filepath}").contents
+        git.object("#{remote}/#{branch_name(branch)}:#{filepath}").contents
       rescue StandardError
         nil
       end
@@ -66,6 +67,10 @@ module VersionManager
 
       attr_reader :git, :options
 
+      def branch_name(version)
+        VCS.branch_name(version, options)
+      end
+
       def branch_exists?(branch_name)
         branches = git_remote['branches'].keys + git_remote['remotes'].keys
         branches.any? { |b| b.split('/').last == branch_name }
@@ -76,11 +81,15 @@ module VersionManager
       end
 
       def remote_master_branch_name
-        "#{options[:remote]}/#{master_branch_name}"
+        "#{remote}/#{master_branch_name}"
       end
 
       def find_remote_branch(branch_name)
-        remote_branch_names.find { |remote, _| branch_name == remote.split('/').last }
+        remote_branch_names.find { |remote| branch_name == remote.split('/').last }
+      end
+
+      def remote
+        options[:remote]
       end
 
       def git_remote
