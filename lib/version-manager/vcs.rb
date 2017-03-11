@@ -20,9 +20,14 @@ module VersionManager
       end
     end
 
-    def self.build
-      case VersionManager.options[:vcs][:name]
-      when 'git' then VersionManager::VCS::Git.new(VersionManager.options[:vcs][:options])
+    def self.branch_name(version, vcs_options)
+      version = version.to_s if version.is_a?(ReleaseVersion)
+      vcs_options[:version_name].call(version)
+    end
+
+    def self.build(vcs_options)
+      case vcs_options[:name]
+      when 'git' then VersionManager::VCS::Git.new(vcs_options)
       else raise UnsupportedVCSError
       end
     end
