@@ -11,11 +11,11 @@ module VersionManager
     vcs: {
       name: 'git',
       default_commit_message: -> (version) { "Bumped to version #{version}" },
-      version_name: -> (version) { "release-#{version.short_version}" },
       options: {
         remote: 'origin',
         master_branch: 'master',
-        dir: ROOT_DIR
+        dir: ROOT_DIR,
+        version_name: -> (version) { "release-#{version.short_version}" },
       }
     },
     authorized_branches: {
