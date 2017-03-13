@@ -49,7 +49,7 @@ module VersionManager
     end
 
     def default_strategy(version)
-      vcs.create_branch!(version.branch)
+      vcs.create_branch!(version)
       vcs.commit(version_storage.store(version), default_commit_message(version))
       vcs.add_tag(version.to_s, default_commit_message(version))
       vcs.push_tag(version.to_s)

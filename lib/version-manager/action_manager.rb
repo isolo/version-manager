@@ -3,7 +3,7 @@ module VersionManager
     def initialize(options)
       @vcs = VCS.build(options[:vcs])
       @storage = VersionStorage.new(vcs, options[:storage])
-      @release_manager = Make.new(vcs, storage)
+      @release_manager = ReleaseManager.new(vcs, storage)
     end
 
     def checkout_to_latest_version
