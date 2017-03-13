@@ -21,7 +21,8 @@ module VersionManager
       end
 
       def show_file(branch, filepath)
-        git.object("#{remote}/#{branch_name(branch)}:#{filepath}").contents
+        relative_filepath = Pathname.new(filepath).relative_path_from(Pathname.new(options[:dir])).to_s
+        git.object("#{remote}/#{branch_name(branch)}:#{relative_filepath}").contents
       rescue StandardError
         nil
       end
