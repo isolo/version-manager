@@ -21,7 +21,7 @@ module VersionManager
     end
 
     def self.branch_name(version, vcs_options)
-      version = version.to_s if version.is_a?(ReleaseVersion)
+      version = ReleaseVersion.new(version) if version.is_a?(String)
       vcs_options[:version_name].call(version)
     end
 
