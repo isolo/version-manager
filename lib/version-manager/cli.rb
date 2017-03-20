@@ -2,7 +2,7 @@ module VersionManager
   class CLI
     def initialize(exec_name: __FILE__)
       @exec_name = exec_name
-      @action_manager = ActionManager.new(VersionManager::Options)
+      @action_manager = ActionManager.new(VersionManager.options)
     end
 
     def start
