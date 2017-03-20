@@ -15,11 +15,11 @@ module VersionManager
     end
 
     def checkout_to_master_branch
-      @local.lib.send(:command, 'checkout', options.dig(:vcs, :options, :master_branch))
+      @local.lib.send(:command, 'checkout', @options.dig(:vcs, :options, :master_branch))
     end
 
     def current_local_branch_version
-      path = File.join(options[:storage][:filepath], options[:storage][:filename])
+      path = File.join(@options[:storage][:filepath], @options[:storage][:filename])
       File.open(path).read
     end
 
