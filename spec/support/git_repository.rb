@@ -1,8 +1,8 @@
 module VersionManager
   class GitRepository
-    def initialize(options)
+    def initialize(root_dir, options)
       @options = options
-      @root_dir = Dir.mktmpdir
+      @root_dir = root_dir
     end
 
     def init
