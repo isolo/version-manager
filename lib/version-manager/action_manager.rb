@@ -3,7 +3,7 @@ module VersionManager
     def initialize(options)
       @vcs = VCS.build(options[:vcs])
       @storage = VersionStorage.new(vcs, options[:storage])
-      @release_manager = ReleaseManager.new(vcs, storage)
+      @release_manager = ReleaseManager.new(vcs, storage, options)
     end
 
     def checkout_to_latest_version
@@ -14,7 +14,7 @@ module VersionManager
     end
 
     def release_new_version(release_type, confirmation_func, retrieve_initial_version_func)
-      make.validate!(release_type)
+      release_manager.validate!(release_type)
       version = release_type == :patch ? storage.current_version : storage.latest_version
       if version
         new_version = version.public_send("bump_#{release_type}")
@@ -22,11 +22,11 @@ module VersionManager
       else
         version = retrieve_initial_version_func.call
       end
-      make.public_send("#{release_type}!", version)
+      release_manager.public_send("#{release_type}!", version)
     end
 
     private
 
-    attr_reader :vcs, :storage
+    attr_reader :vcs, :storage, :release_manager
   end
 end
