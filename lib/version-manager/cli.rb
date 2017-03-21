@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module VersionManager
   class CLI
     def initialize(exec_name: __FILE__)
@@ -22,7 +23,7 @@ module VersionManager
       DOCOPT
 
       begin
-        parse_options(Docopt::docopt(doc))
+        parse_options(Docopt.docopt(doc))
       rescue StandardError => e
         puts e.message
       end
@@ -42,13 +43,12 @@ module VersionManager
     end
 
     def checkout_to_latest_version
-      unless action_manager.checkout_to_latest_version
-        puts 'There are no any versions.'
-      end
+      return unless action_manager.checkout_to_latest_version
+      puts 'There are no any versions.'
     end
 
     def make_release(release_type)
-      action_manager.release_new_version(method(:confirm_new_version), method(:retrieve_initial_version))
+      action_manager.release_new_version(release_type, method(:confirm_new_version), method(:retrieve_initial_version))
     rescue VersionManager::VersionStorage::WrongLatestVersionError => e
       puts "There is inappropriate version #{e.version} in your local/remote repository. Please remove it"
     end

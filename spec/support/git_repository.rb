@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module VersionManager
   class GitRepository
     def initialize(root_dir, options)

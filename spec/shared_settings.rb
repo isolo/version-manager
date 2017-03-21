@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 RSpec.shared_context 'shared settings' do
   let(:root_dir) { Dir.mktmpdir }
   let(:repo_dir) { File.join(root_dir, 'local') }
@@ -14,7 +16,7 @@ RSpec.shared_context 'shared settings' do
         remote: 'origin',
         master_branch: 'master',
         dir: repo_dir,
-        version_name: ->(version) { "release-#{version.short_version}" },
+        version_name: ->(version) { "release-#{version.short_version}" }
       }
     }
   end

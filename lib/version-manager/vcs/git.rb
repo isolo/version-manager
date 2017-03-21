@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module VersionManager
   module VCS
     class Git
@@ -8,7 +9,7 @@ module VersionManager
 
       def create_branch!(branch)
         branch = branch_name(branch)
-        raise VersionManager::VCS::BranchAlreadyExistsError.new(branch) if branch_exists?(branch)
+        raise VersionManager::VCS::BranchAlreadyExistsError, branch if branch_exists?(branch)
         checkout(branch)
       end
 
@@ -29,7 +30,7 @@ module VersionManager
 
       def commit(filepath, message)
         git.lib.send(:command, 'add', filepath)
-        git.lib.send(:command, 'commit', "-m #{message}", '-o', "#{filepath}")
+        git.lib.send(:command, 'commit', "-m #{message}", '-o', filepath)
       end
 
       def add_tag(tag_name, message)

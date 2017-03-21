@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module VersionManager
   class VersionStorage
     class WrongLatestVersionError < StandardError
@@ -58,9 +59,9 @@ module VersionManager
       return prev_last_version unless last_version
       diff = last_version - prev_last_version
       is_appropriate = diff.major == 1
-      is_appropriate ||= diff.major == 0 && diff.minor == 1
-      is_appropriate ||= diff.major == 0 && diff.minor == 0 && diff.patch == 1
-      raise WrongLatestVersionError.new(last_version) unless is_appropriate
+      is_appropriate ||= diff.major.zero? && diff.minor == 1
+      is_appropriate ||= diff.major.zero? && diff.minor.zero? && diff.patch == 1
+      raise WrongLatestVersionError, last_version unless is_appropriate
       last_version
     end
   end

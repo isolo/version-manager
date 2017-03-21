@@ -1,13 +1,14 @@
-require 'shared_settings'
+# frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'bumping version' do
   include_context 'shared settings'
   let(:repo) { VersionManager::GitRepository.new(root_dir, options) }
   let(:default_confirmation_func) { ->(_new_version) { true } }
 
-  def release_new_version(release_type, confirmation_func = default_confirmation_func, retrieve_initial_version_func = nil)
+  def release_new_version(release_type, confirmation_func = default_confirmation_func, retrieve_init_version_func = nil)
     VersionManager::ActionManager
       .new(options)
-      .release_new_version(release_type, confirmation_func, retrieve_initial_version_func)
+      .release_new_version(release_type, confirmation_func, retrieve_init_version_func)
   end
 
   context 'when repository does not contains any versions' do
@@ -35,17 +36,17 @@ RSpec.describe 'bumping version' do
 
     context 'when current branch is a master branch' do
       it 'bumped major version' do
-        release_new_version(:major, default_confirmation_func)
+        release_new_version(:major)
         expect(repo.current_local_branch_version).to eq(current_version.bump_major.to_s)
       end
 
       it 'bumped minor version' do
-        release_new_version(:minor, default_confirmation_func)
+        release_new_version(:minor)
         expect(repo.current_local_branch_version).to eq(current_version.bump_minor.to_s)
       end
 
       it 'does not bump patch version' do
-        expect { release_new_version(:patch, default_confirmation_func) }.to(
+        expect { release_new_version(:patch) }.to(
           raise_error(VersionManager::ReleaseManager::ForbiddenBranchError)
         )
       end
