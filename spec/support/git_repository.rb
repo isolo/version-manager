@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module VersionManager
+module Test
   class GitRepository
     def initialize(root_dir, options)
       @options = options
