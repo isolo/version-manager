@@ -31,7 +31,7 @@ module VersionManager
 
     private
 
-    attr_reader :exec_name
+    attr_reader :exec_name, :action_manager
 
     def parse_options(options)
       puts VersionManager::VERSION if options['--version']
