@@ -39,6 +39,11 @@ module VersionManager
       self.class.new(parts.zip(other.parts).map { |x, y| x - y })
     end
 
+    def bump(release_type)
+      raise ArgumentError, 'Unknown release type' unless %i(major minor patch).include?(release_type.to_sym)
+      public_send("bump_#{release_type}")
+    end
+
     def bump_major
       self.class.new(@major + 1, 0, 0)
     end
