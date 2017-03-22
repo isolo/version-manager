@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 # rubocop:disable Metrics/BlockLength
-RSpec.describe 'bumping version' do
+RSpec.describe 'bumping version action' do
   include_context 'shared settings'
-  let(:repo) { VersionManager::GitRepository.new(root_dir, options) }
+  let(:repo) { Test::GitRepository.new(root_dir, options) }
   let(:default_confirmation_func) { ->(_new_version) { true } }
 
   context 'when repository does not contains any versions' do
     let(:initial_version) { VersionManager::ReleaseVersion.new('1.0.0') }
+    before { repo.init }
     it 'retrieves an initial version' do
-      repo.init
       retrieve_initial_version_func = ->() { initial_version }
-
       release_new_version(:major, default_confirmation_func, retrieve_initial_version_func)
 
       expect(repo).to have_version(initial_version.bump_major)
@@ -80,12 +79,12 @@ RSpec.describe 'bumping version' do
       repo.init
       retrieve_initial_version_func = ->() { initial_version }
       release_new_version(:major, default_confirmation_func, retrieve_initial_version_func)
+      repo.checkout_to_master_branch
+      repo.add_and_commit_changes
     end
 
     %i(major minor patch).each do |version_type|
       it "does not bump #{version_type} version" do
-        repo.checkout_to_master_branch
-        repo.add_and_commit_changes
         expect { release_new_version(version_type) }.to(
           raise_error(VersionManager::ReleaseManager::BranchIsNotUpToDateError)
         )
