@@ -53,7 +53,7 @@ module VersionManager
       puts "There is inappropriate version #{e.version} in your local/remote repository. Please remove it"
     end
 
-    def confirm_new_version
+    def confirm_new_version(new_version)
       Ask.confirm("You are going to upgrade version to #{new_version}. Do it?", default: false)
     end
 
