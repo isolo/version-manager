@@ -3,9 +3,8 @@
 RSpec.describe 'bumping version action' do
   include_context 'shared settings'
   let(:repo) { Test::GitRepository.new(root_dir, options) }
-  let(:default_confirmation_func) { ->(_new_version) { true } }
 
-  context 'when repository does not contains any versions' do
+  context 'when repository does not contain any versions' do
     let(:initial_version) { VersionManager::ReleaseVersion.new('1.0.0') }
     before { repo.init }
     it 'retrieves an initial version' do
@@ -90,15 +89,5 @@ RSpec.describe 'bumping version action' do
         )
       end
     end
-  end
-
-  def release_new_version(release_type, confirmation_func = default_confirmation_func, retrieve_init_version_func = nil)
-    VersionManager::ActionManager
-      .new(options)
-      .release_new_version(release_type, confirmation_func, retrieve_init_version_func)
-  end
-
-  def release_name(version)
-    VersionManager::VCS.branch_name(version, options.dig(:vcs, :options))
   end
 end
