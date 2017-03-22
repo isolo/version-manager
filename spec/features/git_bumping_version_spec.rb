@@ -26,24 +26,49 @@ RSpec.describe 'bumping version' do
       repo.init
       retrieve_initial_version_func = ->() { initial_version }
       release_new_version(:major, default_confirmation_func, retrieve_initial_version_func)
-      repo.checkout_to_master_branch
     end
 
     context 'when current branch is a master branch' do
+      before { repo.checkout_to_master_branch }
       it 'bumped major version' do
         release_new_version(:major)
-        expect(repo.current_local_branch_version).to eq(current_version.bump_major.to_s)
+        expect(repo).to have_version(current_version.bump_major)
+        expect(repo).to have_tag(current_version.bump_major)
+        expect(repo).to have_branch(release_name(current_version.bump_major))
       end
 
       it 'bumped minor version' do
         release_new_version(:minor)
-        expect(repo.current_local_branch_version).to eq(current_version.bump_minor.to_s)
+        expect(repo).to have_version(current_version.bump_minor)
+        expect(repo).to have_tag(current_version.bump_minor)
+        expect(repo).to have_branch(release_name(current_version.bump_minor))
       end
 
       it 'does not bump patch version' do
         expect { release_new_version(:patch) }.to(
           raise_error(VersionManager::ReleaseManager::ForbiddenBranchError)
         )
+      end
+    end
+
+    context 'when current branch is different from a master branch' do
+      it 'does not bump major version' do
+        expect { release_new_version(:major) }.to(
+          raise_error(VersionManager::ReleaseManager::ForbiddenBranchError)
+        )
+      end
+
+      it 'does not bump minor version' do
+        expect { release_new_version(:minor) }.to(
+          raise_error(VersionManager::ReleaseManager::ForbiddenBranchError)
+        )
+      end
+
+      it 'bumped patch version' do
+        release_new_version(:patch)
+        expect(repo).to have_version(current_version.bump_patch)
+        expect(repo).to have_tag(current_version.bump_patch)
+        expect(repo).to have_branch(release_name(current_version.bump_patch))
       end
     end
   end
