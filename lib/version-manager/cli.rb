@@ -43,7 +43,7 @@ module VersionManager
     end
 
     def checkout_to_latest_version
-      return unless action_manager.checkout_to_latest_version
+      return if action_manager.checkout_to_latest_version
       puts 'There are no any versions.'
     end
 
