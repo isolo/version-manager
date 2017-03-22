@@ -33,6 +33,12 @@ module VersionManager
       @local.branches.to_a.last&.name
     end
 
+    def add_and_commit_changes
+      add_random_changes(@local)
+      @local.add
+      @local.commit('some changes')
+    end
+
     private
 
     def initial_commit(repo)
