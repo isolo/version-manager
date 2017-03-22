@@ -2,6 +2,7 @@
 module VersionManager
   class ActionManager
     def initialize(options)
+      @options = options
       @vcs = VCS.build(options[:vcs])
       @storage = VersionStorage.new(vcs, options[:storage])
       @release_manager = ReleaseManager.new(vcs, storage, options)
@@ -10,7 +11,7 @@ module VersionManager
     def checkout_to_latest_version
       version = storage.latest_version
       return false unless version
-      vcs.switch_branch(VCS.branch_name(version, options[:vcs]))
+      vcs.switch_branch(VCS.branch_name(version, options.dig(:vcs, :options)))
       true
     end
 
@@ -28,6 +29,6 @@ module VersionManager
 
     private
 
-    attr_reader :vcs, :storage, :release_manager
+    attr_reader :vcs, :storage, :release_manager, :options
   end
 end
