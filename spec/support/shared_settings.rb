@@ -43,4 +43,16 @@ RSpec.shared_context 'shared settings' do
       storage: storage_opts
     }
   end
+
+  let(:default_confirmation_func) { ->(_new_version) { true } }
+
+  def release_new_version(release_type, confirmation_func = default_confirmation_func, retrieve_init_version_func = nil)
+    VersionManager::ActionManager
+      .new(options)
+      .release_new_version(release_type, confirmation_func, retrieve_init_version_func)
+  end
+
+  def release_name(version)
+    VersionManager::VCS.branch_name(version, options.dig(:vcs, :options))
+  end
 end
