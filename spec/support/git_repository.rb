@@ -13,6 +13,7 @@ module VersionManager
       @local2 = Git.clone(remote_dir, 'local2', path: @root_dir)
 
       initial_commit(@local)
+      @local
     end
 
     def checkout_to_master_branch
@@ -22,6 +23,14 @@ module VersionManager
     def current_local_branch_version
       path = File.join(@options[:storage][:filepath], @options[:storage][:filename])
       File.open(path).read
+    end
+
+    def current_local_tag
+      @local.tags.last&.name
+    end
+
+    def current_local_branch
+      @local.branches.to_a.last&.name
     end
 
     private
