@@ -7,10 +7,10 @@ module Test
     end
 
     def init
-      remote_dir = File.join(@root_dir, 'remote')
-      @remote = Git.init(remote_dir, bare: true)
-      @local = Git.clone(remote_dir, 'local', path: @root_dir)
-      @local2 = Git.clone(remote_dir, 'local2', path: @root_dir)
+      @remote_dir = File.join(@root_dir, 'remote')
+      @remote = Git.init(@remote_dir, bare: true)
+      @local = Git.clone(@remote_dir, 'local', path: @root_dir)
+      @local2 = Git.clone(@remote_dir, 'local2', path: @root_dir)
 
       initial_commit(@local)
       @local
@@ -37,6 +37,12 @@ module Test
       add_random_changes(@local)
       @local.add
       @local.commit('some changes')
+    end
+
+    def teardown
+      FileUtils.rm_f(@remote_dir)
+      FileUtils.rm_f(@local.dir.path)
+      FileUtils.rm_f(@local2.dir.path)
     end
 
     private

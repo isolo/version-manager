@@ -2,6 +2,7 @@
 # rubocop:disable Metrics/BlockLength
 RSpec.shared_context 'shared settings' do
   let(:root_dir) { Dir.mktmpdir }
+  let(:tmp_dir?) { true }
   let(:repo_dir) { File.join(root_dir, 'local') }
 
   let(:vcs) { 'git' }

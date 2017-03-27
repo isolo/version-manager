@@ -90,4 +90,8 @@ RSpec.describe 'bumping version action' do
       end
     end
   end
+
+  after(:each) do
+    repo.teardown if tmp_dir?
+  end
 end

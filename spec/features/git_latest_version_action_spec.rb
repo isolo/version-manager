@@ -37,4 +37,8 @@ RSpec.describe 'latest version action' do
       expect(repo).to have_branch(release_name(current_version))
     end
   end
+
+  after(:each) do
+    repo.teardown if tmp_dir?
+  end
 end
