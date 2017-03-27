@@ -1,7 +1,9 @@
+# frozen_string_literal: true
 module VersionManager
   class CLI
     def initialize(exec_name: __FILE__)
       @exec_name = exec_name
+      @action_manager = ActionManager.new(VersionManager.options)
     end
 
     def start
@@ -21,7 +23,7 @@ module VersionManager
       DOCOPT
 
       begin
-        parse_options(Docopt::docopt(doc))
+        parse_options(Docopt.docopt(doc))
       rescue StandardError => e
         puts e.message
       end
@@ -29,7 +31,7 @@ module VersionManager
 
     private
 
-    attr_reader :exec_name
+    attr_reader :exec_name, :action_manager
 
     def parse_options(options)
       puts VersionManager::VERSION if options['--version']
@@ -41,34 +43,18 @@ module VersionManager
     end
 
     def checkout_to_latest_version
-      storage = build_storage
-      version = storage.latest_version
-      return puts 'There are no any versions.' unless version
-      VCS.build.switch_branch(version.branch)
+      return if action_manager.checkout_to_latest_version
+      puts 'There are no any versions.'
     end
 
     def make_release(release_type)
-      storage = build_storage
-
-      make = Make.new(VCS.build, storage)
-      make.validate!(release_type)
-
-      version = release_type == :patch ? storage.current_version : storage.latest_version
-      if version
-        new_version = version.public_send("bump_#{release_type}")
-        return unless Ask.confirm("You are going to upgrade version to #{new_version}. Do it?", default: false)
-      else
-        version = retrieve_initial_version
-      end
-
-      make.public_send("#{release_type}!", version)
+      action_manager.release_new_version(release_type, method(:confirm_new_version), method(:retrieve_initial_version))
     rescue VersionManager::VersionStorage::WrongLatestVersionError => e
       puts "There is inappropriate version #{e.version} in your local/remote repository. Please remove it"
     end
 
-    def build_storage
-      storage_options = VersionManager.options[:storage]
-      VersionStorage.new(VCS.build, storage_options)
+    def confirm_new_version(new_version)
+      Ask.confirm("You are going to upgrade version to #{new_version}. Do it?", default: false)
     end
 
     def retrieve_initial_version

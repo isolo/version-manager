@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module VersionManager
   class ReleaseVersion
     include Comparable
@@ -19,28 +20,28 @@ module VersionManager
       recalculate_parts
     end
 
-    def to_str
+    def to_s
       res = parts.map(&:to_i).join('.')
       [res, special].compact.join('--')
     end
-    alias_method :to_s, :to_str
 
     def short_version
       [major, minor].map(&:to_i).join('.')
     end
 
-    def branch
-      VersionManager.options[:version_name].call(self)
+    def <=>(other)
+      parts.zip(other.parts)
+           .map { |this, other_part| this <=> other_part }
+           .find { |res| res != 0 } || 0
     end
 
-    def <=>(other_version)
-      parts.zip(other_version.parts).
-        map { |this, other| this <=> other }.
-        find { |res| res != 0 } || 0
+    def -(other)
+      self.class.new(parts.zip(other.parts).map { |x, y| x - y })
     end
 
-    def -(other_version)
-      self.class.new(parts.zip(other_version.parts).map { |x, y| x - y })
+    def bump(release_type)
+      raise ArgumentError, 'Unknown release type' unless %i(major minor patch).include?(release_type.to_sym)
+      public_send("bump_#{release_type}")
     end
 
     def bump_major

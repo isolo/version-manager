@@ -1,3 +1,5 @@
+# rubocop:disable Style/FileName
+# frozen_string_literal: true
 require 'docopt'
 require 'git'
 require 'pathname'
@@ -10,10 +12,12 @@ module VersionManager
   DEFAULTS = {
     vcs: {
       name: 'git',
-      default_commit_message: -> (version) { "Bumped to version #{version}" },
+      default_commit_message: ->(version) { "Bumped to version #{version}" },
       options: {
         remote: 'origin',
-        master_branch: 'master'
+        master_branch: 'master',
+        dir: ROOT_DIR,
+        version_name: ->(version) { "release-#{version.short_version}" }
       }
     },
     authorized_branches: {
@@ -24,9 +28,8 @@ module VersionManager
     storage: {
       filename: 'VERSION',
       filepath: ROOT_DIR
-    },
-    version_name: -> (version) { "release-#{version.short_version}" }
-  }
+    }
+  }.freeze
 
   def self.options
     @options ||= DEFAULTS.dup
@@ -43,6 +46,7 @@ require_relative 'version-manager/vcs/git'
 require_relative 'version-manager/version'
 require_relative 'version-manager/cli'
 
+require_relative 'version-manager/action_manager'
+require_relative 'version-manager/release_manager'
 require_relative 'version-manager/release_version'
 require_relative 'version-manager/version_storage'
-require_relative 'version-manager/make.rb'
