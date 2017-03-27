@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec::Matchers.define :have_version do |version|
   match do |repo|
     repo.current_local_branch_version == version.to_s

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'latest version action' do
   include_context 'shared settings'
   let(:repo) { Test::GitRepository.new(root_dir, options) }
