@@ -1,3 +1,4 @@
+[![Code Climate](https://codeclimate.com/github/isolo/version-manager/badges/gpa.svg)](https://codeclimate.com/github/isolo/version-manager)
 # version-manager
 versioning lib (with Git support) written in Ruby
 
