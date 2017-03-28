@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 module VersionManager
-  class Make
+  class ReleaseManager
     class BranchIsNotUpToDateError < StandardError
       def message
         'Remote branch and local one are different. You need to update your branch or push your changes'
@@ -12,9 +13,10 @@ module VersionManager
       end
     end
 
-    def initialize(vcs, version_storage)
+    def initialize(vcs, version_storage, options)
       @vcs = vcs
       @version_storage = version_storage
+      @options = options
     end
 
     def validate!(release_type)
@@ -40,15 +42,15 @@ module VersionManager
 
     private
 
-    attr_reader :vcs, :version_storage
+    attr_reader :vcs, :version_storage, :options
 
     def appropriate_branch_for?(action)
-      authorized_mask = VersionManager.options[:authorized_branches][action.to_sym]
+      authorized_mask = options[:authorized_branches][action.to_sym]
       !authorized_mask || !vcs.current_branch.match(authorized_mask).nil?
     end
 
     def default_strategy(version)
-      vcs.create_branch!(version.branch)
+      vcs.create_branch!(version)
       vcs.commit(version_storage.store(version), default_commit_message(version))
       vcs.add_tag(version.to_s, default_commit_message(version))
       vcs.push_tag(version.to_s)
@@ -56,7 +58,7 @@ module VersionManager
     end
 
     def default_commit_message(version)
-      message = VersionManager.options[:vcs][:default_commit_message]
+      message = options[:vcs][:default_commit_message]
       message.respond_to?(:call) ? message.call(version) : message.to_s
     end
   end
