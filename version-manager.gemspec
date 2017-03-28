@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'version-manager/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'version-manager'
+  spec.name          = '42bf3a5f55cc4dda8b5a73ff109cc204'
   spec.version       = VersionManager::VERSION
   spec.authors       = ['Ilya Solo']
   spec.email         = ['ilya.i.solo@gmail.com']
