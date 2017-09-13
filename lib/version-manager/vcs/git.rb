@@ -30,7 +30,7 @@ module VersionManager
 
       def commit(filepath, message)
         git.lib.send(:command, 'add', filepath)
-        git.lib.send(:command, 'commit', "-m #{message}", '-o', filepath)
+        git.lib.send(:command, 'commit', ['-m', message.to_s, '-o', filepath.to_s])
       end
 
       def add_tag(tag_name, message)
